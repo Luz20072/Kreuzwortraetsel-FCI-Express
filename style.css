@@ -6,29 +6,51 @@ body {
   flex-wrap: wrap;
 }
 
+/* Container für das Gitter */
 #grid-container {
   display: inline-block;
 }
 
+/* Das Kreuzworträtsel als Tabelle */
 #crossword {
   border-collapse: collapse;
 }
 
+/* Jedes Feld im Gitter */
 #crossword td {
   width: 32px;
   height: 32px;
-  border: 1px solid #000;  /* feine Linien zwischen Feldern */
+  border: 1px solid #ccc;  /* feine Linie zwischen allen Feldern */
   text-align: center;
   vertical-align: middle;
   padding: 0;
   background: #ffffff;
 }
 
+/* Blockfelder (nicht zu befüllende Felder) */
 #crossword td.block {
   background: #f0f0f0;
-  border: none;
+  border: 1px solid #ccc;   /* Blockfelder auch mit feiner Linie */
 }
 
+/* Außenrahmen etwas dicker */
+#crossword tr:first-child td {
+  border-top: 2px solid #666;
+}
+
+#crossword tr:last-child td {
+  border-bottom: 2px solid #666;
+}
+
+#crossword tr td:first-child {
+  border-left: 2px solid #666;
+}
+
+#crossword tr td:last-child {
+  border-right: 2px solid #666;
+}
+
+/* Eingabefelder in den weißen Kästchen */
 #crossword input {
   width: 100%;
   height: 100%;
@@ -39,6 +61,7 @@ body {
   outline: none;
 }
 
+/* Bereich für Hinweise rechts */
 #hints {
   max-width: 400px;
 }
@@ -51,7 +74,7 @@ body {
   margin-bottom: 1rem;
 }
 
-/* Hinweise ohne Bullet/Nummer, nur unsere Zahl im Text */
+/* Hinweise ohne Bullet/Nummer, nur unsere TEXT-Nummer z.B. "1. ..." */
 #hints ul {
   list-style-type: none;
   padding-left: 0;
@@ -61,6 +84,7 @@ body {
   margin-bottom: 4px;
 }
 
+/* Button-Bereich unten */
 #controls {
   width: 100%;
   margin-top: 1rem;
@@ -68,6 +92,7 @@ body {
   gap: 0.5rem;
 }
 
+/* Popup für das Geheimwort */
 #secret-popup {
   position: fixed;
   inset: 0;
