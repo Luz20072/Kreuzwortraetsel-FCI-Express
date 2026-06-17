@@ -31,7 +31,7 @@ async function generateNewCrossword() {
   const allQuestions = await loadQuestions();
 
   // Anzahl Wörter pro Rätsel – kannst du anpassen
-  const selectionCount = Math.min(8, allQuestions.length);
+  const selectionCount = Math.min(15, allQuestions.length);
   const randomQuestions = getRandomSubset(allQuestions, selectionCount);
 
   const words = randomQuestions.map(q => ({
