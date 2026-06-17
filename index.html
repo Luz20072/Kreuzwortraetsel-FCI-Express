@@ -18,12 +18,17 @@
       border-collapse: collapse;
     }
     #crossword td {
-      width: 28px;
-      height: 28px;
-      border: 1px solid #ccc;
-      text-align: center;
-      vertical-align: middle;
-      padding: 0;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #aaa;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0;
+    background: #ffffff;
+    }
+    #crossword td.block {
+      background: #f0f0f0;   /* leicht grau statt schwarz */
+      border: none;          /* wenn du gar keinen Rand willst */
     }
     #crossword input {
       width: 100%;
@@ -33,10 +38,6 @@
       text-transform: uppercase;
       font-size: 16px;
       outline: none;
-    }
-    #crossword td.block {
-    background: transparent;
-    border: none;
     }
     #hints {
       max-width: 400px;
@@ -78,11 +79,11 @@
     <h2>Hinweise</h2>
     <div class="hint-group">
       <h3>Waagerecht</h3>
-      <ol id="hints-across"></ol>
+      <ul id="hints-across"></ol>
     </div>
     <div class="hint-group">
       <h3>Senkrecht</h3>
-      <ol id="hints-down"></ol>
+      <ul id="hints-down"></ol>
     </div>
   </div>
 

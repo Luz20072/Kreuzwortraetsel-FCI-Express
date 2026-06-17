@@ -126,19 +126,44 @@ function renderGrid(grid, placedWords) {
   const table = document.getElementById('crossword');
   table.innerHTML = '';
 
+  // Startzellen der Wörter merken: "row-col" -> number
+  const startCells = new Map();
+  placedWords.forEach(word => {
+    const key = word.row + '-' + word.col;
+    startCells.set(key, word.number);
+  });
+
   for (let r = 0; r < GRID_SIZE; r++) {
     const tr = document.createElement('tr');
     for (let c = 0; c < GRID_SIZE; c++) {
       const td = document.createElement('td');
+
       if (grid[r][c] === null) {
         td.classList.add('block');
       } else {
+        td.style.position = 'relative';
+
         const input = document.createElement('input');
         input.maxLength = 1;
         input.dataset.row = r;
         input.dataset.col = c;
         td.appendChild(input);
+
+        // Nummer in Startzellen anzeigen
+        const key = r + '-' + c;
+        if (startCells.has(key)) {
+          const num = startCells.get(key);
+          const label = document.createElement('span');
+          label.textContent = num;
+          label.style.position = 'absolute';
+          label.style.top = '2px';
+          label.style.left = '3px';
+          label.style.fontSize = '10px';
+          label.style.color = '#555';
+          td.appendChild(label);
+        }
       }
+
       tr.appendChild(td);
     }
     table.appendChild(tr);
@@ -152,7 +177,9 @@ function renderGrid(grid, placedWords) {
 
   placedWords.forEach(word => {
     const li = document.createElement('li');
+    // ENTWEDER: eigene Nummer im Text (dann in index.html <ul> statt <ol> benutzen)
     li.textContent = word.number + '. ' + word.clue;
+    // ODER: nur word.clue nehmen und <ol> nutzen, wenn du die automatische Nummerierung willst
     if (word.direction === 'across') {
       acrossList.appendChild(li);
     } else {
