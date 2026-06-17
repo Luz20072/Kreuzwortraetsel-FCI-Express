@@ -77,7 +77,6 @@ function placeWords(words) {
         }
       }
     }
-
     // Falls kein Kreuz möglich: Wort wird ignoriert
   }
 
@@ -133,6 +132,22 @@ function renderGrid(grid, placedWords) {
     startCells.set(key, word.number);
   });
 
+  // Mapping von Zellen zu Wort-IDs
+  const cellWords = {}; // key "r-c" -> { across: number|undefined, down: number|undefined }
+
+  placedWords.forEach(word => {
+    const len = word.solution.length;
+    for (let i = 0; i < len; i++) {
+      const r = word.direction === 'across' ? word.row : word.row + i;
+      const c = word.direction === 'down' ? word.col : word.col + i;
+      const key = r + '-' + c;
+      if (!cellWords[key]) {
+        cellWords[key] = {};
+      }
+      cellWords[key][word.direction] = word.number;
+    }
+  });
+
   for (let r = 0; r < GRID_SIZE; r++) {
     const tr = document.createElement('tr');
     for (let c = 0; c < GRID_SIZE; c++) {
@@ -147,10 +162,20 @@ function renderGrid(grid, placedWords) {
         input.maxLength = 1;
         input.dataset.row = r;
         input.dataset.col = c;
+
+        const key = r + '-' + c;
+        if (cellWords[key]) {
+          if (cellWords[key].across) {
+            input.dataset.across = cellWords[key].across;
+          }
+          if (cellWords[key].down) {
+            input.dataset.down = cellWords[key].down;
+          }
+        }
+
         td.appendChild(input);
 
         // Nummer in Startzellen anzeigen
-        const key = r + '-' + c;
         if (startCells.has(key)) {
           const num = startCells.get(key);
           const label = document.createElement('span');
@@ -177,9 +202,8 @@ function renderGrid(grid, placedWords) {
 
   placedWords.forEach(word => {
     const li = document.createElement('li');
-    // ENTWEDER: eigene Nummer im Text (dann in index.html <ul> statt <ol> benutzen)
+    // eigene Nummer im Text; in index.html dann <ul> verwenden, wenn du keine doppelte Nummer willst
     li.textContent = word.number + '. ' + word.clue;
-    // ODER: nur word.clue nehmen und <ol> nutzen, wenn du die automatische Nummerierung willst
     if (word.direction === 'across') {
       acrossList.appendChild(li);
     } else {
@@ -187,34 +211,104 @@ function renderGrid(grid, placedWords) {
     }
   });
 
-  // Eingabefluss: automatisch zum nächsten Feld springen
+  // Eingabefluss: automatisch entlang des aktuellen Wortes springen
   const inputs = Array.from(document.querySelectorAll('#crossword input'));
 
-  inputs.forEach((input, index) => {
+  // aktuelle Richtung: 'across' oder 'down'
+  let currentDirection = 'across';
+
+  function getInputsForWord(wordNumber, direction) {
+    return inputs.filter(inp => inp.dataset[direction] == wordNumber)
+      .sort((a, b) => {
+        const ar = parseInt(a.dataset.row, 10);
+        const ac = parseInt(a.dataset.col, 10);
+        const br = parseInt(b.dataset.row, 10);
+        const bc = parseInt(b.dataset.col, 10);
+        if (direction === 'across') {
+          return ac - bc || ar - br;
+        } else {
+          return ar - br || ac - bc;
+        }
+      });
+  }
+
+  inputs.forEach((input) => {
+    input.addEventListener('focus', () => {
+      // Beim Klick entscheiden, welche Richtung aktiv ist
+      const hasAcross = !!input.dataset.across;
+      const hasDown = !!input.dataset.down;
+
+      if (hasAcross && !hasDown) {
+        currentDirection = 'across';
+      } else if (!hasAcross && hasDown) {
+        currentDirection = 'down';
+      } else if (hasAcross && hasDown) {
+        // Kreuzungsfeld: Standard auf across, könnte man später toggeln
+        currentDirection = 'across';
+      }
+    });
+
     input.addEventListener('input', (e) => {
       const value = e.target.value.toUpperCase();
       e.target.value = value;
 
-      if (value && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-        inputs[index + 1].select();
+      if (!value) return;
+
+      const dirKey = currentDirection;
+      const wordNumber = input.dataset[dirKey];
+      if (!wordNumber) {
+        return;
+      }
+
+      const wordInputs = getInputsForWord(wordNumber, dirKey);
+      const index = wordInputs.indexOf(input);
+
+      if (index > -1 && index < wordInputs.length - 1) {
+        const nextInput = wordInputs[index + 1];
+        nextInput.focus();
+        nextInput.select();
       }
     });
 
-    // Pfeiltasten-Navigation
     input.addEventListener('keydown', (e) => {
+      const dirKey = currentDirection;
+      const wordNumber = input.dataset[dirKey];
+
+      if ((e.key === 'Backspace' || e.key === 'Delete') && wordNumber) {
+        const wordInputs = getInputsForWord(wordNumber, dirKey);
+        const index = wordInputs.indexOf(input);
+
+        if (e.key === 'Backspace') {
+          if (input.value) {
+            // aktuellen Buchstaben löschen, nicht springen
+            return;
+          }
+          if (index > 0) {
+            e.preventDefault();
+            const prevInput = wordInputs[index - 1];
+            prevInput.focus();
+            prevInput.value = '';
+          }
+        }
+        return;
+      }
+
+      // Pfeiltasten steuern Richtung explizit
       const r = parseInt(input.dataset.row, 10);
       const c = parseInt(input.dataset.col, 10);
-
       let target = null;
 
       if (e.key === 'ArrowRight') {
+        currentDirection = 'across';
         target = inputs.find(inp => inp.dataset.row == r && inp.dataset.col == c + 1);
       } else if (e.key === 'ArrowLeft') {
+        currentDirection = 'across';
         target = inputs.find(inp => inp.dataset.row == r && inp.dataset.col == c - 1);
       } else if (e.key === 'ArrowDown') {
+        currentDirection = 'down';
         target = inputs.find(inp => inp.dataset.row == r + 1 && inp.dataset.col == c);
       } else if (e.key === 'ArrowUp') {
+        currentDirection = 'down';
         target = inputs.find(inp => inp.dataset.row == r - 1 && inp.dataset.col == c);
       }
 
