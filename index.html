@@ -35,7 +35,8 @@
       outline: none;
     }
     #crossword td.block {
-      background: #333;
+    background: transparent;
+    border: none;
     }
     #hints {
       max-width: 400px;
@@ -93,12 +94,13 @@
   <div id="secret-popup">
     <div id="secret-popup-content">
       <h2>Geschafft!</h2>
-      <p>Schicke wortlos folgendes an die IT:</p>
+      <p>Antworte bitte Folgendes auf die Mail in der du den Link bekommen hast:</p>
       <p><strong id="secret-code">GEHEIMWORT</strong></p>
       <button id="close-popup">Schließen</button>
     </div>
   </div>
 
+  <script src="crossword.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
