@@ -6,18 +6,17 @@ body {
   flex-wrap: wrap;
 }
 
-/* Container für das Gitter (Überschrift + Tabelle) */
+/* Container für das Gitter */
 #grid-container {
   display: inline-block;
-  flex: 1 1 auto;
-  border: 2px solid #555555;   /* Rahmen um das gesamte Grid */
-  padding: 8px;                /* etwas Abstand zwischen Rahmen und Gitter */
 }
 
 /* Tabelle für das Kreuzworträtsel */
 #crossword {
   border-collapse: collapse;
+  border: 2px solid #000;
 }
+
 
 /* Basis für jedes Feld im Gitter */
 #crossword td {
@@ -31,7 +30,7 @@ body {
 
 /* Buchstabenfelder: voller Rahmen */
 #crossword td:not(.block) {
-  border: 1px solid #000000;
+  border: 1px solid #000;
 }
 
 /* Blockfelder: nur grau, kein Rand */
@@ -39,6 +38,7 @@ body {
   background: #f0f0f0;
   border: none;
 }
+
 
 /* Eingabefelder in den weißen Kästchen */
 #crossword input {
@@ -51,16 +51,9 @@ body {
   outline: none;
 }
 
-/* Falsche Felder hellrot hinterlegen */
-#crossword td.wrong {
-  background: #ffe0e0 !important;
-  border-color: #ff8080 !important;
-}
-
 /* Bereich für Hinweise rechts */
 #hints {
-  flex: 0 0 260px;      /* fixe Breite für die Hinweis-Spalte */
-  max-width: 260px;
+  max-width: 400px;
 }
 
 #hints h2 {
@@ -79,32 +72,6 @@ body {
 
 #hints li {
   margin-bottom: 4px;
-  line-height: 1.2;
-}
-
-/* Regeln-Block zwischen Hinweisen und Buttons */
-#rules {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fafafa;
-  font-size: 0.9rem;
-}
-
-#rules h2 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
-}
-
-#rules ul {
-  margin: 0;
-  padding-left: 1.2rem;
-}
-
-#rules li {
-  margin-bottom: 0.25rem;
 }
 
 /* Button-Bereich unten */
@@ -131,4 +98,28 @@ body {
   max-width: 400px;
   text-align: center;
   border-radius: 6px;
+}
+
+#rules {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fafafa;
+  font-size: 0.9rem;
+}
+
+#rules h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+#rules ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+#rules li {
+  margin-bottom: 0.25rem;
 }
