@@ -25,6 +25,15 @@ function showSecretPopup() {
   popup.style.display = 'flex';
 }
 
+// Info-Popup anzeigen (für Fehler oder unfair kleine Rätsel)
+function showInfoPopup(message) {
+  const popup = document.getElementById('info-popup');
+  const msgElem = document.getElementById('info-message');
+  msgElem.textContent = message;
+  popup.style.display = 'flex';
+}
+
+
 // Neues Kreuzworträtsel erzeugen
 async function generateNewCrossword() {
   const allQuestions = await loadQuestions();
@@ -54,26 +63,43 @@ async function generateNewCrossword() {
 
   renderGrid(grid, placedWords);
 
-  const checkBtn = document.getElementById('check-btn');
+    const checkBtn = document.getElementById('check-btn');
   checkBtn.onclick = () => {
     const ok = checkSolution(grid, placedWords);
-    if (ok) {
-      showSecretPopup();
-    } else {
-      alert('Es sind noch Fehler im Rätsel. Schau nochmal drüber.');
+
+    if (!ok) {
+      // Fehler im Rätsel -> Info-Popup statt alert
+      showInfoPopup('Es sind noch Fehler im Rätsel. Schau bitte nochmal über deine Eingaben.');
+      return;
     }
+
+    // Fairness-Regel: Fünf oder weniger Begriffe -> unfair
+    if (placedWords.length <= 5) {
+      showInfoPopup('Dieses Rätsel hat zu wenige Begriffe und ist laut Regeln unfair. Bitte lade die Seite mit F5 neu, um ein neues Rätsel zu erzeugen.');
+      return;
+    }
+
+    // Alles korrekt UND genug Begriffe -> Gewinn-Popup
+    showSecretPopup();
   };
-}
+
+  };
 
 // Initialisierung
 document.addEventListener('DOMContentLoaded', () => {
   generateNewCrossword().catch(err => {
     console.error(err);
-    alert('Fehler beim Erzeugen des Kreuzworträtsels.');
+    showInfoPopup('Fehler beim Erzeugen des Kreuzworträtsels.');
   });
 
   const closePopup = document.getElementById('close-popup');
   closePopup.addEventListener('click', () => {
     document.getElementById('secret-popup').style.display = 'none';
   });
+
+  const closeInfoPopup = document.getElementById('close-info-popup');
+  closeInfoPopup.addEventListener('click', () => {
+    document.getElementById('info-popup').style.display = 'none';
+  });
 });
+

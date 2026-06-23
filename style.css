@@ -123,3 +123,20 @@ body {
 #rules li {
   margin-bottom: 0.25rem;
 }
+
+#info-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#info-popup-content {
+  background: white;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  border-radius: 6px;
+}
