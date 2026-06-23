@@ -417,7 +417,7 @@ function renderGrid(grid, placedWords) {
   }
 
   inputs.forEach((input) => {
-    input.addEventListener('focus', () => {
+      input.addEventListener('focus', () => {
       const hasAcross = !!input.dataset.across;
       const hasDown = !!input.dataset.down;
 
@@ -425,10 +425,9 @@ function renderGrid(grid, placedWords) {
         currentDirection = 'across';
       } else if (!hasAcross && hasDown) {
         currentDirection = 'down';
-      } else if (hasAcross && hasDown) {
-        currentDirection = 'across';
       }
     });
+
 
     input.addEventListener('input', (e) => {
       const value = e.target.value.toUpperCase();
